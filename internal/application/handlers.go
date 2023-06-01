@@ -12,6 +12,10 @@ import (
 )
 
 func (app *Application) home(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
 	if r.Method == http.MethodPost {
 		orderID := r.FormValue("order_id")
 		http.Redirect(w, r, "/order/?order_id="+orderID, http.StatusSeeOther)
