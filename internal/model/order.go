@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -10,7 +11,8 @@ import (
 )
 
 var (
-	ErrNoRecord = errors.New("no matching record found")
+	ErrNoRecord       = errors.New("no matching record found")
+	ErrDuplicateOrder = errors.New("order already exists")
 )
 
 type OrderModel struct {
@@ -21,6 +23,10 @@ func (m *OrderModel) AddOrder(o *order.Order) error {
 	_, err := m.Pool.Exec(context.Background(),
 		`INSERT INTO orders VALUES ($1, $2);`, o.OrderID, o.Data)
 	if err != nil {
+		// check if error code is 23505 (duplicate primary key)
+		if strings.HasSuffix(err.Error(), "(SQLSTATE 23505)") {
+			return ErrDuplicateOrder
+		}
 		return err
 	}
 	return nil
