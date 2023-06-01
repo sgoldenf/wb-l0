@@ -5,21 +5,22 @@
 <head>
     <meta charset="utf-8">
     <title>Task L0</title>
+    <link rel="stylesheet" href="/styles/styles.css">
 </head>
 
 <body>
     <main>
         <form action='/' method='POST'>
-            <div>
+            <div class="order-prompt">
                 <label>Order ID:</label>
                 <input type='text' name='order_id'>
             </div>
-            <div>
+            <div class="submit-button">
                 <input type='submit' value='Get Order Info'>
             </div>
         </form>
         {{with .OrderData}}
-        <div>{{.}}</div>
+        <div class="data">{{.}}</div>
         {{end}}
     </main>
 </body>
