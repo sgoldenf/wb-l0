@@ -9,6 +9,7 @@ import (
 	"github.com/go-playground/form"
 	"github.com/nats-io/stan.go"
 	"github.com/sgoldenf/wb_l0/internal/interface/order"
+	"github.com/sgoldenf/wb_l0/internal/model"
 )
 
 type Application struct {
@@ -55,6 +56,8 @@ func (app *Application) InitStanSubscription() error {
 
 func (app *Application) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
+	fileServer := http.FileServer(http.Dir("./resources/styles/"))
+	mux.Handle("/styles/", http.StripPrefix("/styles", fileServer))
 	mux.HandleFunc("/", app.logRequest(app.home))
 	mux.HandleFunc("/order/", app.logRequest(app.viewOrder))
 	return mux
@@ -88,6 +91,10 @@ func (app *Application) addOrder(data []byte) {
 		return
 	}
 	if err := app.Orders.AddOrder(o); err != nil {
+		if err == model.ErrDuplicateOrder {
+			app.InfoLog.Println(err)
+			return
+		}
 		app.ErrorLog.Println(err)
 		return
 	}
