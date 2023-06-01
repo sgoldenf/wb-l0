@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    CREATE DATABASE $DB_NAME;
+EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
+    CREATE TABLE orders (
+        order_uid VARCHAR PRIMARY KEY,
+        data JSONB NOT NULL
+    );
+EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
+    CREATE USER $DB_USER WITH ENCRYPTED PASSWORD '$DB_PASSWORD';
+    GRANT CONNECT ON DATABASE $DB_NAME TO $DB_USER;
+    GRANT SELECT, INSERT, UPDATE ON TABLE orders TO $DB_USER;
+EOSQL

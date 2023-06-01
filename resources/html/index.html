@@ -1,0 +1,28 @@
+{{define "index"}}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Task L0</title>
+</head>
+
+<body>
+    <main>
+        <form action='/' method='POST'>
+            <div>
+                <label>Order ID:</label>
+                <input type='text' name='order_id'>
+            </div>
+            <div>
+                <input type='submit' value='Get Order Info'>
+            </div>
+        </form>
+        {{with .OrderData}}
+        <div>{{.}}</div>
+        {{end}}
+    </main>
+</body>
+
+</html>
+{{end}}

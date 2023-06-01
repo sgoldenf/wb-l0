@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  l0_db:
+    container_name: l0_pg_container
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    image: l0_pg_image
+    ports:
+      - 5432:5432
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+  stan:
+    image: nats-streaming
+    container_name: stan_server
+    ports:
+      - "4222:4222"
