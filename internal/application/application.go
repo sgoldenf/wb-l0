@@ -46,6 +46,9 @@ func (app *Application) InitStanConnection() error {
 func (app *Application) InitStanSubscription() error {
 	sub, err := app.stanConn.Subscribe("orders", func(m *stan.Msg) {
 		app.addOrder(m.Data)
+		if err := m.Ack(); err != nil {
+			app.ErrorLog.Println(err)
+		}
 	})
 	if err != nil {
 		return err
